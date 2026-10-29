@@ -5,411 +5,611 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filas Rapidas</title>
   <style>
-    /* ── Tipografía ── */
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
-    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --teal:   #4EC9A8;
       --teal-d: #3aad8e;
+      --teal-dd:#2c8c72;
       --teal-l: #d0f5ec;
+      --teal-xl:#effaf6;
       --dark:   #0d1a16;
+      --text:   #1a2e28;
       --card:   #ffffff;
       --muted:  #6b7a74;
       --border: #e2ece9;
-      --sold:   #ff4d4d;
-      --sold-bg:#fff0f0;
-      --radius: 14px;
+      --sold:   #e03a3a;
+      --sold-d: #c03030;
+      --sold-bg:#fff4f4;
+      --bg:     #f0f9f6;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow-sm: 0 1px 2px rgba(13,26,22,.04), 0 1px 3px rgba(13,26,22,.06);
+      --shadow-md: 0 4px 12px rgba(13,26,22,.06), 0 12px 32px rgba(13,26,22,.06);
     }
 
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background: #f0f9f6;
-      color: #1a2e28;
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 400px at 50% -120px, rgba(78,201,168,.18), transparent 70%),
+        var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     /* ── Header ── */
     header {
-      background: var(--teal);
-      padding: 18px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-d) 100%);
+      box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 6px 24px rgba(58,173,142,.28);
+    }
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 24px;
       display: flex;
       align-items: center;
       gap: 16px;
-      box-shadow: 0 4px 18px rgba(78,201,168,.35);
     }
 
-    .logo-icon {
-      width: 54px;
-      height: 54px;
-      background: rgba(255,255,255,.18);
+    .logo-img {
+      height: 52px;
+      width: auto;
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(13,26,22,.18);
+      border: 2px solid rgba(255,255,255,.35);
     }
 
-    /* Double-chevron SVG inline */
-    .logo-icon svg { width: 32px; height: 32px; }
-
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1;
-    }
-    .logo-text .line1 {
+    .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .brand-title {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 26px;
+      font-weight: 800;
+      font-size: 18px;
       color: #fff;
-      letter-spacing: -.5px;
+      letter-spacing: -.2px;
     }
-    .logo-text .line2 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 19px;
-      color: rgba(255,255,255,.88);
-      letter-spacing: 2px;
+    .brand-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.8);
+      font-weight: 500;
     }
 
     .header-right {
       margin-left: auto;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      background: rgba(13,26,22,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      padding: 7px 14px;
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
     }
 
     #status-dot {
-      width: 10px; height: 10px;
+      width: 8px; height: 8px;
       border-radius: 50%;
       background: #fff;
-      opacity: .5;
+      opacity: .45;
       transition: background .3s, opacity .3s;
     }
-    #status-dot.live { background: #90ff90; opacity: 1; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(144,255,144,.5)} 50%{box-shadow:0 0 0 6px rgba(144,255,144,0)} }
+    #status-dot.live { background: #7fffb8; opacity: 1; animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(127,255,184,.55); }
+      50%      { box-shadow: 0 0 0 6px rgba(127,255,184,0); }
+    }
 
-    #status-text { color: rgba(255,255,255,.9); font-size: 13px; font-weight: 500; }
+    #status-text {
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
 
     /* ── Main ── */
-    main { max-width: 960px; margin: 0 auto; padding: 32px 20px 60px; }
+    main { max-width: 1120px; margin: 0 auto; padding: 36px 24px 90px; }
 
-    /* ── Evento Panel ── */
-    .event-panel {
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1.5px solid var(--border);
-      padding: 26px 28px;
-      margin-bottom: 28px;
+    .section-head {
       display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin: 0 0 16px;
+      gap: 12px;
     }
-
-    .event-icon {
-      width: 48px; height: 48px;
-      background: var(--teal-l);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-
-    .event-info { flex: 1; min-width: 200px; }
-    .event-info h2 {
+    .section-title {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      font-size: 22px;
-      color: var(--dark);
-    }
-    .event-meta {
-      display: flex; gap: 16px; margin-top: 6px; flex-wrap: wrap;
-    }
-    .event-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: var(--teal-l);
-      color: var(--teal-d);
-      border-radius: 20px;
-      padding: 3px 12px;
-      font-size: 12.5px;
-      font-weight: 600;
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
     }
 
     /* ── Crear Evento ── */
     #create-section {
       background: var(--card);
       border-radius: var(--radius);
-      border: 1.5px dashed var(--teal);
-      padding: 30px;
-      margin-bottom: 28px;
-      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      padding: 32px 36px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
     }
+    #create-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--teal), var(--teal-d));
+    }
+    .create-head { margin-bottom: 22px; }
     #create-section h3 {
       font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 17px;
+      font-weight: 800;
+      font-size: 20px;
       color: var(--dark);
-      margin-bottom: 18px;
+      letter-spacing: -.2px;
     }
-    .form-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .create-head p { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 14px;
+      align-items: end;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
     .form-row input {
-      padding: 10px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
+      height: 44px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      background: var(--teal-xl);
+      border-radius: var(--radius-sm);
       font-size: 14px;
       font-family: inherit;
       outline: none;
-      transition: border-color .2s;
-      min-width: 220px;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      width: 100%;
+      color: var(--dark);
     }
-    .form-row input:focus { border-color: var(--teal); }
+    .form-row input::placeholder { color: #9aaba5; }
+    .form-row input:focus {
+      border-color: var(--teal);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(78,201,168,.18);
+    }
+
     .btn-teal {
-      background: var(--teal);
+      height: 44px;
+      background: linear-gradient(180deg, var(--teal) 0%, var(--teal-d) 100%);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      padding: 0 24px;
       font-size: 14px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      transition: background .2s, transform .1s;
-      display: inline-flex; align-items: center; gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 4px 12px rgba(58,173,142,.35);
+      transition: filter .2s, transform .1s, box-shadow .2s;
     }
-    .btn-teal:hover { background: var(--teal-d); }
-    .btn-teal:active { transform: scale(.97); }
+    .btn-teal:hover { filter: brightness(.96); box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 6px 16px rgba(58,173,142,.45); }
+    .btn-teal:active { transform: translateY(1px); }
 
-    /* ── Filas Grid ── */
+    /* ── Evento Panel ── */
+    .event-panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      padding: 22px 26px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .event-color-bar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-d));
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(58,173,142,.35);
+    }
+    .event-color-bar svg { width: 22px; height: 22px; }
+
+    .event-info { flex: 1; min-width: 180px; }
+    .event-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--teal-d);
+      margin-bottom: 2px;
+    }
+    .event-info h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--dark);
+      letter-spacing: -.3px;
+      line-height: 1.2;
+    }
+    .event-meta { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .event-badge {
+      background: var(--teal-xl);
+      color: var(--teal-dd);
+      border: 1px solid var(--teal-l);
+      border-radius: 999px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: #fff;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-ghost:hover { border-color: var(--sold); color: var(--sold); background: var(--sold-bg); }
+
+    /* ── Grid ── */
     #filas-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
     }
 
-    /* ── Fila Card ── */
+    /* ── Card ── */
     .fila-card {
       background: var(--card);
       border-radius: var(--radius);
-      border: 1.5px solid var(--border);
+      border: 1px solid var(--border);
       overflow: hidden;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
-      transition: transform .2s, box-shadow .2s;
-      animation: fadeIn .4s ease;
+      box-shadow: var(--shadow-sm);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s;
+      animation: fadeIn .35s ease;
+      display: flex;
+      flex-direction: column;
     }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
-    .fila-card:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(0,0,0,.10); }
-    .fila-card.vendida { border-color: var(--sold); background: var(--sold-bg); }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px) } to { opacity:1; transform:translateY(0) } }
+    .fila-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--teal-l); }
+    .fila-card.vendida { border-color: rgba(224,58,58,.45); background: linear-gradient(180deg, #fff 0%, var(--sold-bg) 100%); }
 
     .card-header {
-      background: var(--teal);
-      padding: 12px 16px;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-d) 100%);
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .fila-card.vendida .card-header { background: var(--sold); }
+    .fila-card.vendida .card-header { background: linear-gradient(135deg, var(--sold) 0%, var(--sold-d) 100%); }
 
-    .task-badge {
-      background: rgba(255,255,255,.22);
+    .task-id { display: flex; align-items: center; gap: 12px; }
+    .task-avatar {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
       color: #fff;
-      font-size: 11px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .task-label {
+      color: rgba(255,255,255,.78);
+      font-size: 10.5px;
       font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 20px;
-      letter-spacing: .5px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .task-num {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.2;
     }
 
     .vendida-chip {
       background: #fff;
       color: var(--sold);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: .8px;
+      text-transform: uppercase;
       display: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,.12);
     }
     .fila-card.vendida .vendida-chip { display: inline-block; }
 
-    .card-body { padding: 16px; }
+    .card-body { padding: 8px 18px; flex: 1; }
 
     .info-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 7px 0;
+      gap: 12px;
+      padding: 11px 0;
       border-bottom: 1px solid var(--border);
       font-size: 13.5px;
     }
     .info-row:last-of-type { border-bottom: none; }
+
     .info-label {
       color: var(--muted);
       font-weight: 500;
-      display: flex; align-items: center; gap: 5px;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
     }
-    .info-value { font-weight: 600; color: var(--dark); text-align: right; max-width: 180px; word-break: break-all; }
+    .info-value {
+      font-weight: 600;
+      color: var(--dark);
+      text-align: right;
+      max-width: 190px;
+      word-break: break-all;
+      font-variant-numeric: tabular-nums;
+    }
+    .info-value.mono { font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace; font-size: 12.5px; font-weight: 500; color: var(--text); }
+    .info-value.accent {
+      color: var(--teal-dd);
+      background: var(--teal-xl);
+      border: 1px solid var(--teal-l);
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+    .fila-card.vendida .info-value.accent { color: var(--sold); background: #fff; border-color: rgba(224,58,58,.25); }
 
     /* email toggle */
-    .email-wrapper { display: flex; align-items: center; gap: 6px; }
-    .email-hidden { letter-spacing: 2px; color: var(--muted); }
+    .email-wrapper { display: flex; align-items: center; gap: 8px; }
+    .email-hidden { letter-spacing: 2px; color: var(--muted); font-size: 11px; }
     .eye-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--teal); font-size: 15px; padding: 0 2px;
-      line-height: 1; flex-shrink: 0;
+      background: var(--teal-xl);
+      border: 1px solid var(--teal-l);
+      border-radius: 8px;
+      cursor: pointer;
+      width: 28px; height: 28px;
+      flex-shrink: 0;
+      color: var(--teal-d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, color .2s;
     }
-    .eye-btn:hover { color: var(--teal-d); }
-
-    /* wait time */
-    .espera-value { color: var(--teal-d); }
+    .eye-btn:hover { background: var(--teal-l); color: var(--teal-dd); }
+    .eye-btn svg { width: 15px; height: 15px; }
 
     /* ── Copy Button ── */
-    .card-footer { padding: 12px 16px; border-top: 1px solid var(--border); }
+    .card-footer { padding: 14px 18px 18px; }
     .copy-btn {
       width: 100%;
-      background: var(--teal);
+      height: 42px;
+      background: var(--dark);
       color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 10px;
+      border-radius: var(--radius-sm);
       font-size: 13.5px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 7px;
-      transition: background .2s, transform .1s;
+      letter-spacing: .2px;
+      transition: background .2s, transform .1s, box-shadow .2s;
     }
-    .copy-btn:hover { background: var(--teal-d); }
-    .copy-btn:active { transform: scale(.97); }
-    .copy-btn.copied { background: #27ae60; }
+    .copy-btn:hover { background: var(--teal-d); box-shadow: 0 4px 12px rgba(58,173,142,.35); }
+    .copy-btn:active { transform: translateY(1px); }
+    .copy-btn.copied, .copy-btn.copied:hover { background: #2aa160; }
     .fila-card.vendida .copy-btn { background: var(--sold); }
-    .fila-card.vendida .copy-btn:hover { background: #cc3333; }
+    .fila-card.vendida .copy-btn:hover { background: var(--sold-d); box-shadow: 0 4px 12px rgba(224,58,58,.3); }
 
     /* ── Empty state ── */
     #empty-state {
       grid-column: 1/-1;
       text-align: center;
-      padding: 60px 20px;
+      padding: 64px 24px;
       color: var(--muted);
+      background: var(--card);
+      border: 1px dashed #c9ddd6;
+      border-radius: var(--radius);
     }
-    #empty-state .big-icon { font-size: 52px; margin-bottom: 12px; }
-    #empty-state p { font-size: 15px; }
+    .empty-icon {
+      width: 64px; height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--teal-xl);
+      border: 1px solid var(--teal-l);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--teal-d);
+    }
+    #empty-state svg { width: 28px; height: 28px; }
+    #empty-state h4 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--dark);
+      margin-bottom: 6px;
+    }
+    #empty-state p { font-size: 13.5px; max-width: 380px; margin: 0 auto; }
 
     /* ── Update bar ── */
     #update-bar {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: var(--teal);
-      color: #fff;
-      font-size: 12.5px;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(13,26,22,.88);
+      backdrop-filter: blur(8px);
+      color: rgba(255,255,255,.9);
+      font-size: 12px;
       font-weight: 500;
-      text-align: center;
-      padding: 6px;
+      padding: 8px 16px;
+      border-radius: 999px;
       z-index: 99;
+      letter-spacing: .2px;
+      box-shadow: 0 8px 24px rgba(13,26,22,.25);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
     }
-    #countdown-bar {
+    #update-bar strong { color: var(--teal); font-weight: 700; font-variant-numeric: tabular-nums; }
+    #progress-wrap {
       display: inline-block;
-      width: 120px;
+      width: 90px;
       height: 4px;
-      background: rgba(255,255,255,.35);
+      background: rgba(255,255,255,.15);
       border-radius: 4px;
-      vertical-align: middle;
-      margin-left: 8px;
       overflow: hidden;
     }
-    #countdown-fill {
+    #progress-fill {
+      display: block;
       height: 100%;
-      background: #fff;
+      background: var(--teal);
       border-radius: 4px;
       transition: width 1s linear;
     }
 
-    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .form-row { grid-template-columns: 1fr; }
+      .btn-teal { width: 100%; }
+      #create-section { padding: 26px 20px; }
+    }
     @media (max-width: 600px) {
-      header { padding: 14px 18px; }
-      .logo-text .line1 { font-size: 20px; }
-      .logo-text .line2 { font-size: 15px; }
+      .header-inner { padding: 10px 16px; }
+      .logo-img { height: 44px; }
+      .brand-sub { display: none; }
+      main { padding: 24px 16px 90px; }
+      .event-panel { padding: 18px; }
+      .btn-ghost { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════ HEADER ══════════════ -->
+<!-- HEADER -->
 <header>
-  <div class="logo-icon">
-    <!-- Double chevron inspired by the logo -->
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M7 5 L17 16 L7 27" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M3 8 L3 5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-      <path d="M15 5 L25 16 L15 27" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M11 8 L11 5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".5"/>
-    </svg>
-  </div>
-  <div class="logo-text">
-    <span class="line1">FILAS</span>
-    <span class="line2">RAPIDAS</span>
-  </div>
-  <div class="header-right">
-    <div id="status-dot"></div>
-    <span id="status-text">Conectando...</span>
+  <div class="header-inner">
+    <img src="assets/filasrapidas.jpg" alt="Filas Rapidas" class="logo-img" />
+    <div class="brand-text">
+      <span class="brand-title">Filas Rapidas</span>
+      <span class="brand-sub">Panel de control</span>
+    </div>
+    <div class="header-right">
+      <div id="status-dot"></div>
+      <span id="status-text">Conectando...</span>
+    </div>
   </div>
 </header>
 
-<!-- ══════════════ MAIN ══════════════ -->
+<!-- MAIN -->
 <main>
 
   <!-- Crear evento -->
   <div id="create-section">
-    <h3>🎪 Crear nuevo evento</h3>
+    <div class="create-head">
+      <h3>Nuevo evento</h3>
+      <p>Crea un evento para empezar a monitorear las filas en tiempo real.</p>
+    </div>
     <div class="form-row">
-      <input type="text"  id="inp-nombre" placeholder="Nombre del evento (ej: U2 River)" />
-      <input type="date"  id="inp-fecha" />
-      <button class="btn-teal" onclick="crearEvento()">
-        <span>✓</span> Crear evento
-      </button>
+      <div class="field">
+        <label for="inp-nombre">Nombre del evento</label>
+        <input type="text" id="inp-nombre" placeholder="Ej: Recital Estadio River" />
+      </div>
+      <div class="field">
+        <label for="inp-fecha">Fecha</label>
+        <input type="date" id="inp-fecha" />
+      </div>
+      <button class="btn-teal" onclick="crearEvento()">Crear evento</button>
     </div>
   </div>
 
   <!-- Evento activo -->
   <div class="event-panel" id="event-panel" style="display:none">
-    <div class="event-icon">🎪</div>
+    <div class="event-color-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9a3 3 0 0 0 0 6v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a3 3 0 0 0 0-6V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/><path d="M13 5v2M13 17v2M13 11v2"/>
+      </svg>
+    </div>
     <div class="event-info">
+      <div class="event-eyebrow">Evento activo</div>
       <h2 id="event-nombre">—</h2>
       <div class="event-meta">
-        <span class="event-badge">📅 <span id="event-fecha">—</span></span>
-        <span class="event-badge" id="event-filas-badge">🎟️ 0 filas activas</span>
+        <span class="event-badge" id="event-fecha-badge">Sin fecha</span>
+        <span class="event-badge" id="event-filas-badge">0 filas activas</span>
       </div>
     </div>
-    <button class="btn-teal" onclick="resetEvento()" style="font-size:12px;padding:7px 14px;background:rgba(0,0,0,.12);">
-      ✕ Cerrar evento
-    </button>
+    <button class="btn-ghost" onclick="resetEvento()">Cerrar evento</button>
   </div>
 
-  <!-- Grid de filas -->
+  <div class="section-head">
+    <span class="section-title">Filas en curso</span>
+  </div>
+
+  <!-- Cards -->
   <div id="filas-container">
     <div id="empty-state">
-      <div class="big-icon">⏳</div>
-      <p>Creá un evento y las filas aparecerán acá a medida que se conecten.</p>
+      <div class="empty-icon">
+        <!-- Hourglass icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 2h14M5 22h14M6 2v4l6 6-6 6v4M18 2v4l-6 6 6 6v4"/>
+        </svg>
+      </div>
+      <h4>Sin filas activas</h4>
+      <p>Crea un evento — las filas aparecen aqui a medida que se conectan.</p>
     </div>
   </div>
 
 </main>
 
-<!-- Bottom update bar -->
+<!-- Bottom bar -->
 <div id="update-bar">
-  🔄 Actualizando en <span id="countdown-secs">30</span>s
-  <span id="countdown-bar"><span id="countdown-fill" style="width:100%"></span></span>
+  <span>Actualizando en <strong><span id="countdown-secs">30</span>s</strong></span>
+  <span id="progress-wrap"><span id="progress-fill" style="width:100%"></span></span>
 </div>
 
-<!-- ══════════════ FIREBASE SDK ══════════════ -->
+<!-- FIREBASE SDK -->
 <script type="module">
-  import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set, get, child }
+  import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  /* ── Config ── */
   const firebaseConfig = {
     apiKey:            "AIzaSyDplPxgZIqxj__l81l6fbtH_DSnQ0DP9ok",
     authDomain:        "filasrapidas.firebaseapp.com",
@@ -423,49 +623,39 @@
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
 
-  /* ── Estado local ── */
-  let eventoActivo = null;    // { id, nombre, fecha }
-  let filasData    = {};      // taskIndex → datos
+  let eventoActivo = null;
+  let filasData    = {};
 
-  /* ══════════ EVENTO ══════════ */
+  /* ── Crear / cerrar evento ── */
   window.crearEvento = function() {
     const nombre = document.getElementById('inp-nombre').value.trim();
     const fecha  = document.getElementById('inp-fecha').value;
-    if (!nombre) { alert('Ingresá un nombre para el evento'); return; }
-
-    const id = 'evt_' + Date.now();
-    const evento = { id, nombre, fecha: fecha || null, creadoEn: Date.now() };
-
-    set(ref(db, 'evento_activo'), evento);
+    if (!nombre) { alert('Ingresa un nombre para el evento'); return; }
+    set(ref(db, 'evento_activo'), { id: 'evt_' + Date.now(), nombre, fecha: fecha || null, creadoEn: Date.now() });
   };
 
   window.resetEvento = function() {
-    if (!confirm('¿Cerrar el evento activo? Se borrarán las filas del panel.')) return;
+    if (!confirm('Cerrar el evento activo? Se limpiaran las filas del panel.')) return;
     set(ref(db, 'evento_activo'), null);
     set(ref(db, 'filas'), null);
   };
 
-  /* ══════════ LISTENERS ══════════ */
-
-  // Escucha el evento activo
+  /* ── Listeners ── */
   onValue(ref(db, 'evento_activo'), snap => {
     eventoActivo = snap.val();
     renderEvento();
   });
 
-  // Escucha las filas en tiempo real
   onValue(ref(db, 'filas'), snap => {
     filasData = snap.val() || {};
     renderFilas();
-    // Actualizar badge
     const total = Object.keys(filasData).length;
-    document.getElementById('event-filas-badge').textContent = `🎟️ ${total} fila${total !== 1 ? 's' : ''} activa${total !== 1 ? 's' : ''}`;
-    // Status dot
+    document.getElementById('event-filas-badge').textContent = `${total} fila${total !== 1 ? 's' : ''} activa${total !== 1 ? 's' : ''}`;
     document.getElementById('status-dot').className = 'live';
     document.getElementById('status-text').textContent = 'En vivo';
   });
 
-  /* ══════════ RENDER EVENTO ══════════ */
+  /* ── Render evento ── */
   function renderEvento() {
     const panel  = document.getElementById('event-panel');
     const create = document.getElementById('create-section');
@@ -477,20 +667,20 @@
     panel.style.display  = 'flex';
     create.style.display = 'none';
     document.getElementById('event-nombre').textContent = eventoActivo.nombre;
+    const fechaBadge = document.getElementById('event-fecha-badge');
     if (eventoActivo.fecha) {
       const [y,m,d] = eventoActivo.fecha.split('-');
-      document.getElementById('event-fecha').textContent = `${d}/${m}/${y}`;
+      fechaBadge.textContent = `${d}/${m}/${y}`;
     } else {
-      document.getElementById('event-fecha').textContent = 'Sin fecha definida';
+      fechaBadge.textContent = 'Sin fecha';
     }
   }
 
-  /* ══════════ RENDER FILAS ══════════ */
+  /* ── Render filas ── */
   function renderFilas() {
     const container = document.getElementById('filas-container');
     const empty     = document.getElementById('empty-state');
-
-    const entries = Object.entries(filasData);
+    const entries   = Object.entries(filasData);
 
     if (entries.length === 0) {
       container.innerHTML = '';
@@ -498,13 +688,11 @@
       empty.style.display = 'block';
       return;
     }
-
     empty.style.display = 'none';
 
     entries.forEach(([taskIdx, data]) => {
       const cardId = `card-task-${taskIdx}`;
       let card = document.getElementById(cardId);
-
       if (!card) {
         card = document.createElement('div');
         card.id        = cardId;
@@ -512,113 +700,114 @@
         container.appendChild(card);
       }
 
-      // Vendida?
       if (data.vendida) card.classList.add('vendida');
       else              card.classList.remove('vendida');
 
-      // Formatear espera
+      // Espera
       let esperaTxt = '—';
-      if (data.espera !== undefined && data.espera !== null) {
+      if (data.espera != null) {
         const mins = Math.round(Number(data.espera) / 60);
         esperaTxt = isNaN(mins) ? String(data.espera) : `~${mins} min`;
       }
 
-      // Formatear personas
-      const personas = data.personas !== undefined ? Number(data.personas).toLocaleString('es-AR') : '—';
+      // Personas
+      const personas = data.personas != null ? Number(data.personas).toLocaleString('es-AR') : '—';
 
-      // ID fila (truncado)
-      const idFilaShort = data.idFila && data.idFila !== 'NO_ENCONTRADO'
-        ? data.idFila.substring(0, 8) + '…'
+      // ID fila truncado
+      const idShort = data.idFila && data.idFila !== 'NO_ENCONTRADO'
+        ? data.idFila.substring(0, 8) + '...'
         : '—';
 
       card.innerHTML = `
         <div class="card-header">
-          <span class="task-badge">TAREA ${taskIdx}</span>
-          <span class="vendida-chip">✅ VENDIDA</span>
+          <div class="task-id">
+            <div class="task-avatar">${taskIdx}</div>
+            <div>
+              <div class="task-label">Tarea</div>
+              <div class="task-num">Fila #${taskIdx}</div>
+            </div>
+          </div>
+          <span class="vendida-chip">Vendida</span>
         </div>
         <div class="card-body">
           <div class="info-row">
-            <span class="info-label">📧 Email</span>
+            <span class="info-label">Email</span>
             <span class="info-value">
               <span class="email-wrapper">
-                <span class="email-hidden" id="email-txt-${taskIdx}">••••••••••</span>
-                <button class="eye-btn" onclick="toggleEmail('${taskIdx}','${escapeAttr(data.email)}')" title="Mostrar/ocultar email">👁</button>
+                <span class="email-hidden" id="email-txt-${taskIdx}">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
+                <button class="eye-btn" onclick="toggleEmail('${taskIdx}','${esc(data.email)}')" title="Mostrar / ocultar">
+                  <svg id="eye-icon-${taskIdx}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </button>
               </span>
             </span>
           </div>
           <div class="info-row">
-            <span class="info-label">🆔 ID Fila</span>
-            <span class="info-value" title="${escapeAttr(data.idFila)}">${idFilaShort}</span>
+            <span class="info-label">ID Fila</span>
+            <span class="info-value mono" title="${esc(data.idFila)}">${idShort}</span>
           </div>
           <div class="info-row">
-            <span class="info-label">👥 En cola delante</span>
+            <span class="info-label">En cola delante</span>
             <span class="info-value">${personas}</span>
           </div>
           <div class="info-row" style="border-bottom:none">
-            <span class="info-label">⏳ Espera estimada</span>
-            <span class="info-value espera-value">${esperaTxt}</span>
+            <span class="info-label">Espera estimada</span>
+            <span class="info-value accent">${esperaTxt}</span>
           </div>
         </div>
         <div class="card-footer">
-          <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${escapeAttr(data.url)}')">
-            📋 Copiar link de fila
+          <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${esc(data.url)}')">
+            Copiar link de fila
           </button>
         </div>
       `;
     });
 
-    // Eliminar cards de tareas que ya no existen
+    // Limpiar cards obsoletas
     container.querySelectorAll('.fila-card').forEach(c => {
-      const ti = c.id.replace('card-task-', '');
-      if (!(ti in filasData)) c.remove();
+      if (!(c.id.replace('card-task-', '') in filasData)) c.remove();
     });
   }
 
-  /* ══════════ UTILS ══════════ */
-  function escapeAttr(s) {
-    return (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  /* ── Utils ── */
+  function esc(s) {
+    return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
   }
 
   window.toggleEmail = function(taskIdx, email) {
     const span = document.getElementById(`email-txt-${taskIdx}`);
     if (!span) return;
     if (span.dataset.visible === '1') {
-      span.textContent      = '••••••••••';
-      span.className        = 'email-hidden';
-      span.dataset.visible  = '0';
+      span.innerHTML       = '&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;';
+      span.className       = 'email-hidden';
+      span.dataset.visible = '0';
     } else {
-      span.textContent      = email;
-      span.className        = '';
-      span.dataset.visible  = '1';
+      span.textContent     = email;
+      span.className       = '';
+      span.dataset.visible = '1';
     }
   };
 
   window.copiarLink = function(taskIdx, url) {
-    if (!url || url === 'null') { alert('El link todavía no está disponible.'); return; }
+    if (!url || url === 'null' || url === '') { alert('El link aun no esta disponible.'); return; }
     navigator.clipboard.writeText(url).then(() => {
       const btn = document.getElementById(`copy-btn-${taskIdx}`);
       if (!btn) return;
-      const orig = btn.innerHTML;
-      btn.innerHTML = '✅ ¡Copiado!';
+      const orig = btn.textContent;
+      btn.textContent = 'Copiado';
       btn.classList.add('copied');
-      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
-    }).catch(() => {
-      prompt('Copiá este link:', url);
-    });
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => prompt('Copia este link:', url));
   };
 
-  /* ══════════ COUNTDOWN 30s ══════════ */
+  /* ── Countdown ── */
   let secsLeft = 30;
-  const countdownSecs = document.getElementById('countdown-secs');
-  const countdownFill = document.getElementById('countdown-fill');
-
   setInterval(() => {
-    secsLeft--;
-    if (secsLeft <= 0) secsLeft = 30;
-    countdownSecs.textContent = secsLeft;
-    countdownFill.style.width = (secsLeft / 30 * 100) + '%';
+    secsLeft = secsLeft <= 1 ? 30 : secsLeft - 1;
+    document.getElementById('countdown-secs').textContent = secsLeft;
+    document.getElementById('progress-fill').style.width  = (secsLeft / 30 * 100) + '%';
   }, 1000);
-  // Firebase onValue ya escucha en tiempo real — el countdown es solo visual
 </script>
 </body>
 </html>
