@@ -793,9 +793,9 @@
       // Personas
       const personas = data.personas != null ? Number(data.personas).toLocaleString('es-AR') : '—';
 
-      // ID fila truncado
-      const idShort = data.idFila && data.idFila !== 'NO_ENCONTRADO'
-        ? data.idFila.substring(0, 8) + '...'
+      // ID fila completo
+      const idCompleto = data.idFila && data.idFila !== 'NO_ENCONTRADO'
+        ? data.idFila
         : '—';
 
       card.innerHTML = `
@@ -833,7 +833,7 @@
           </div>
           <div class="info-row">
             <span class="info-label">ID Fila</span>
-            <span class="info-value mono" title="${esc(data.idFila)}">${idShort}</span>
+            <span class="info-value mono" style="font-size:11px;max-width:210px;word-break:break-all;" title="${esc(data.idFila)}">${idCompleto}</span>
           </div>
           <div class="info-row">
             <span class="info-label">En cola delante</span>
