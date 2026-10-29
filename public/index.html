@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filas Rapidas</title>
+  <style>
+    /* ── Tipografía ── */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:   #4EC9A8;
+      --teal-d: #3aad8e;
+      --teal-l: #d0f5ec;
+      --dark:   #0d1a16;
+      --card:   #ffffff;
+      --muted:  #6b7a74;
+      --border: #e2ece9;
+      --sold:   #ff4d4d;
+      --sold-bg:#fff0f0;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f9f6;
+      color: #1a2e28;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--teal);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 18px rgba(78,201,168,.35);
+    }
+
+    .logo-icon {
+      width: 54px;
+      height: 54px;
+      background: rgba(255,255,255,.18);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Double-chevron SVG inline */
+    .logo-icon svg { width: 32px; height: 32px; }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .logo-text .line1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 26px;
+      color: #fff;
+      letter-spacing: -.5px;
+    }
+    .logo-text .line2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      color: rgba(255,255,255,.88);
+      letter-spacing: 2px;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: .5;
+      transition: background .3s, opacity .3s;
+    }
+    #status-dot.live { background: #90ff90; opacity: 1; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(144,255,144,.5)} 50%{box-shadow:0 0 0 6px rgba(144,255,144,0)} }
+
+    #status-text { color: rgba(255,255,255,.9); font-size: 13px; font-weight: 500; }
+
+    /* ── Main ── */
+    main { max-width: 960px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    /* ── Evento Panel ── */
+    .event-panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      padding: 26px 28px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .event-icon {
+      width: 48px; height: 48px;
+      background: var(--teal-l);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .event-info { flex: 1; min-width: 200px; }
+    .event-info h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 22px;
+      color: var(--dark);
+    }
+    .event-meta {
+      display: flex; gap: 16px; margin-top: 6px; flex-wrap: wrap;
+    }
+    .event-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--teal-l);
+      color: var(--teal-d);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    /* ── Crear Evento ── */
+    #create-section {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1.5px dashed var(--teal);
+      padding: 30px;
+      margin-bottom: 28px;
+      text-align: center;
+    }
+    #create-section h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--dark);
+      margin-bottom: 18px;
+    }
+    .form-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .form-row input {
+      padding: 10px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+      min-width: 220px;
+    }
+    .form-row input:focus { border-color: var(--teal); }
+    .btn-teal {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-teal:hover { background: var(--teal-d); }
+    .btn-teal:active { transform: scale(.97); }
+
+    /* ── Filas Grid ── */
+    #filas-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    /* ── Fila Card ── */
+    .fila-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      transition: transform .2s, box-shadow .2s;
+      animation: fadeIn .4s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:translateY(0) } }
+    .fila-card:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(0,0,0,.10); }
+    .fila-card.vendida { border-color: var(--sold); background: var(--sold-bg); }
+
+    .card-header {
+      background: var(--teal);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fila-card.vendida .card-header { background: var(--sold); }
+
+    .task-badge {
+      background: rgba(255,255,255,.22);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      letter-spacing: .5px;
+    }
+
+    .vendida-chip {
+      background: #fff;
+      color: var(--sold);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      display: none;
+    }
+    .fila-card.vendida .vendida-chip { display: inline-block; }
+
+    .card-body { padding: 16px; }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+    }
+    .info-row:last-of-type { border-bottom: none; }
+    .info-label {
+      color: var(--muted);
+      font-weight: 500;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .info-value { font-weight: 600; color: var(--dark); text-align: right; max-width: 180px; word-break: break-all; }
+
+    /* email toggle */
+    .email-wrapper { display: flex; align-items: center; gap: 6px; }
+    .email-hidden { letter-spacing: 2px; color: var(--muted); }
+    .eye-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--teal); font-size: 15px; padding: 0 2px;
+      line-height: 1; flex-shrink: 0;
+    }
+    .eye-btn:hover { color: var(--teal-d); }
+
+    /* wait time */
+    .espera-value { color: var(--teal-d); }
+
+    /* ── Copy Button ── */
+    .card-footer { padding: 12px 16px; border-top: 1px solid var(--border); }
+    .copy-btn {
+      width: 100%;
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: background .2s, transform .1s;
+    }
+    .copy-btn:hover { background: var(--teal-d); }
+    .copy-btn:active { transform: scale(.97); }
+    .copy-btn.copied { background: #27ae60; }
+    .fila-card.vendida .copy-btn { background: var(--sold); }
+    .fila-card.vendida .copy-btn:hover { background: #cc3333; }
+
+    /* ── Empty state ── */
+    #empty-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    #empty-state .big-icon { font-size: 52px; margin-bottom: 12px; }
+    #empty-state p { font-size: 15px; }
+
+    /* ── Update bar ── */
+    #update-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--teal);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 500;
+      text-align: center;
+      padding: 6px;
+      z-index: 99;
+    }
+    #countdown-bar {
+      display: inline-block;
+      width: 120px;
+      height: 4px;
+      background: rgba(255,255,255,.35);
+      border-radius: 4px;
+      vertical-align: middle;
+      margin-left: 8px;
+      overflow: hidden;
+    }
+    #countdown-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 4px;
+      transition: width 1s linear;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header { padding: 14px 18px; }
+      .logo-text .line1 { font-size: 20px; }
+      .logo-text .line2 { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="logo-icon">
+    <!-- Double chevron inspired by the logo -->
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 5 L17 16 L7 27" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M3 8 L3 5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+      <path d="M15 5 L25 16 L15 27" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11 8 L11 5" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+    </svg>
+  </div>
+  <div class="logo-text">
+    <span class="line1">FILAS</span>
+    <span class="line2">RAPIDAS</span>
+  </div>
+  <div class="header-right">
+    <div id="status-dot"></div>
+    <span id="status-text">Conectando...</span>
+  </div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main>
+
+  <!-- Crear evento -->
+  <div id="create-section">
+    <h3>🎪 Crear nuevo evento</h3>
+    <div class="form-row">
+      <input type="text"  id="inp-nombre" placeholder="Nombre del evento (ej: U2 River)" />
+      <input type="date"  id="inp-fecha" />
+      <button class="btn-teal" onclick="crearEvento()">
+        <span>✓</span> Crear evento
+      </button>
+    </div>
+  </div>
+
+  <!-- Evento activo -->
+  <div class="event-panel" id="event-panel" style="display:none">
+    <div class="event-icon">🎪</div>
+    <div class="event-info">
+      <h2 id="event-nombre">—</h2>
+      <div class="event-meta">
+        <span class="event-badge">📅 <span id="event-fecha">—</span></span>
+        <span class="event-badge" id="event-filas-badge">🎟️ 0 filas activas</span>
+      </div>
+    </div>
+    <button class="btn-teal" onclick="resetEvento()" style="font-size:12px;padding:7px 14px;background:rgba(0,0,0,.12);">
+      ✕ Cerrar evento
+    </button>
+  </div>
+
+  <!-- Grid de filas -->
+  <div id="filas-container">
+    <div id="empty-state">
+      <div class="big-icon">⏳</div>
+      <p>Creá un evento y las filas aparecerán acá a medida que se conecten.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom update bar -->
+<div id="update-bar">
+  🔄 Actualizando en <span id="countdown-secs">30</span>s
+  <span id="countdown-bar"><span id="countdown-fill" style="width:100%"></span></span>
+</div>
+
+<!-- ══════════════ FIREBASE SDK ══════════════ -->
+<script type="module">
+  import { initializeApp }           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, set, get, child }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  /* ── Config ── */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDplPxgZIqxj__l81l6fbtH_DSnQ0DP9ok",
+    authDomain:        "filasrapidas.firebaseapp.com",
+    projectId:         "filasrapidas",
+    storageBucket:     "filasrapidas.firebasestorage.app",
+    messagingSenderId: "485708830289",
+    appId:             "1:485708830289:web:e373d6207c324e3ede0a70",
+    databaseURL:       "https://filasrapidas-default-rtdb.firebaseio.com"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  /* ── Estado local ── */
+  let eventoActivo = null;    // { id, nombre, fecha }
+  let filasData    = {};      // taskIndex → datos
+
+  /* ══════════ EVENTO ══════════ */
+  window.crearEvento = function() {
+    const nombre = document.getElementById('inp-nombre').value.trim();
+    const fecha  = document.getElementById('inp-fecha').value;
+    if (!nombre) { alert('Ingresá un nombre para el evento'); return; }
+
+    const id = 'evt_' + Date.now();
+    const evento = { id, nombre, fecha: fecha || null, creadoEn: Date.now() };
+
+    set(ref(db, 'evento_activo'), evento);
+  };
+
+  window.resetEvento = function() {
+    if (!confirm('¿Cerrar el evento activo? Se borrarán las filas del panel.')) return;
+    set(ref(db, 'evento_activo'), null);
+    set(ref(db, 'filas'), null);
+  };
+
+  /* ══════════ LISTENERS ══════════ */
+
+  // Escucha el evento activo
+  onValue(ref(db, 'evento_activo'), snap => {
+    eventoActivo = snap.val();
+    renderEvento();
+  });
+
+  // Escucha las filas en tiempo real
+  onValue(ref(db, 'filas'), snap => {
+    filasData = snap.val() || {};
+    renderFilas();
+    // Actualizar badge
+    const total = Object.keys(filasData).length;
+    document.getElementById('event-filas-badge').textContent = `🎟️ ${total} fila${total !== 1 ? 's' : ''} activa${total !== 1 ? 's' : ''}`;
+    // Status dot
+    document.getElementById('status-dot').className = 'live';
+    document.getElementById('status-text').textContent = 'En vivo';
+  });
+
+  /* ══════════ RENDER EVENTO ══════════ */
+  function renderEvento() {
+    const panel  = document.getElementById('event-panel');
+    const create = document.getElementById('create-section');
+    if (!eventoActivo) {
+      panel.style.display  = 'none';
+      create.style.display = 'block';
+      return;
+    }
+    panel.style.display  = 'flex';
+    create.style.display = 'none';
+    document.getElementById('event-nombre').textContent = eventoActivo.nombre;
+    if (eventoActivo.fecha) {
+      const [y,m,d] = eventoActivo.fecha.split('-');
+      document.getElementById('event-fecha').textContent = `${d}/${m}/${y}`;
+    } else {
+      document.getElementById('event-fecha').textContent = 'Sin fecha definida';
+    }
+  }
+
+  /* ══════════ RENDER FILAS ══════════ */
+  function renderFilas() {
+    const container = document.getElementById('filas-container');
+    const empty     = document.getElementById('empty-state');
+
+    const entries = Object.entries(filasData);
+
+    if (entries.length === 0) {
+      container.innerHTML = '';
+      container.appendChild(empty);
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    entries.forEach(([taskIdx, data]) => {
+      const cardId = `card-task-${taskIdx}`;
+      let card = document.getElementById(cardId);
+
+      if (!card) {
+        card = document.createElement('div');
+        card.id        = cardId;
+        card.className = 'fila-card';
+        container.appendChild(card);
+      }
+
+      // Vendida?
+      if (data.vendida) card.classList.add('vendida');
+      else              card.classList.remove('vendida');
+
+      // Formatear espera
+      let esperaTxt = '—';
+      if (data.espera !== undefined && data.espera !== null) {
+        const mins = Math.round(Number(data.espera) / 60);
+        esperaTxt = isNaN(mins) ? String(data.espera) : `~${mins} min`;
+      }
+
+      // Formatear personas
+      const personas = data.personas !== undefined ? Number(data.personas).toLocaleString('es-AR') : '—';
+
+      // ID fila (truncado)
+      const idFilaShort = data.idFila && data.idFila !== 'NO_ENCONTRADO'
+        ? data.idFila.substring(0, 8) + '…'
+        : '—';
+
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="task-badge">TAREA ${taskIdx}</span>
+          <span class="vendida-chip">✅ VENDIDA</span>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span class="info-label">📧 Email</span>
+            <span class="info-value">
+              <span class="email-wrapper">
+                <span class="email-hidden" id="email-txt-${taskIdx}">••••••••••</span>
+                <button class="eye-btn" onclick="toggleEmail('${taskIdx}','${escapeAttr(data.email)}')" title="Mostrar/ocultar email">👁</button>
+              </span>
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">🆔 ID Fila</span>
+            <span class="info-value" title="${escapeAttr(data.idFila)}">${idFilaShort}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">👥 En cola delante</span>
+            <span class="info-value">${personas}</span>
+          </div>
+          <div class="info-row" style="border-bottom:none">
+            <span class="info-label">⏳ Espera estimada</span>
+            <span class="info-value espera-value">${esperaTxt}</span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${escapeAttr(data.url)}')">
+            📋 Copiar link de fila
+          </button>
+        </div>
+      `;
+    });
+
+    // Eliminar cards de tareas que ya no existen
+    container.querySelectorAll('.fila-card').forEach(c => {
+      const ti = c.id.replace('card-task-', '');
+      if (!(ti in filasData)) c.remove();
+    });
+  }
+
+  /* ══════════ UTILS ══════════ */
+  function escapeAttr(s) {
+    return (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  window.toggleEmail = function(taskIdx, email) {
+    const span = document.getElementById(`email-txt-${taskIdx}`);
+    if (!span) return;
+    if (span.dataset.visible === '1') {
+      span.textContent      = '••••••••••';
+      span.className        = 'email-hidden';
+      span.dataset.visible  = '0';
+    } else {
+      span.textContent      = email;
+      span.className        = '';
+      span.dataset.visible  = '1';
+    }
+  };
+
+  window.copiarLink = function(taskIdx, url) {
+    if (!url || url === 'null') { alert('El link todavía no está disponible.'); return; }
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.getElementById(`copy-btn-${taskIdx}`);
+      if (!btn) return;
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✅ ¡Copiado!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      prompt('Copiá este link:', url);
+    });
+  };
+
+  /* ══════════ COUNTDOWN 30s ══════════ */
+  let secsLeft = 30;
+  const countdownSecs = document.getElementById('countdown-secs');
+  const countdownFill = document.getElementById('countdown-fill');
+
+  setInterval(() => {
+    secsLeft--;
+    if (secsLeft <= 0) secsLeft = 30;
+    countdownSecs.textContent = secsLeft;
+    countdownFill.style.width = (secsLeft / 30 * 100) + '%';
+  }, 1000);
+  // Firebase onValue ya escucha en tiempo real — el countdown es solo visual
+</script>
+</body>
+</html>
