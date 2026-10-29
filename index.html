@@ -135,6 +135,25 @@
       letter-spacing: 1.2px;
       color: var(--muted);
     }
+    .btn-clear-filas {
+      background: #fff;
+      color: var(--sold);
+      border: 1px solid rgba(224,58,58,.35);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-clear-filas:hover {
+      background: var(--sold-bg);
+      border-color: var(--sold);
+    }
 
     /* ── Crear Evento ── */
     #create-section {
@@ -358,6 +377,31 @@
       box-shadow: 0 2px 6px rgba(0,0,0,.12);
     }
     .fila-card.vendida .vendida-chip { display: inline-block; }
+    .delete-fila-btn {
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      padding: 0;
+    }
+    .delete-fila-btn:hover {
+      background: rgba(224,58,58,.9);
+      border-color: rgba(224,58,58,1);
+    }
+    .delete-fila-btn:active {
+      transform: scale(.92);
+    }
+    .delete-fila-btn svg {
+      width: 14px;
+      height: 14px;
+    }
 
     .card-body { padding: 8px 18px; flex: 1; }
 
@@ -580,6 +624,13 @@
 
   <div class="section-head">
     <span class="section-title">Filas en curso</span>
+    <button class="btn-clear-filas" id="btn-clear-filas" onclick="borrarTodasLasFilas()" style="display:none">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      Borrar todas las filas
+    </button>
   </div>
 
   <!-- Cards -->
@@ -607,7 +658,7 @@
 <!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp }        from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set }
+  import { getDatabase, ref, onValue, set, remove }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -640,6 +691,24 @@
     set(ref(db, 'filas'), null);
   };
 
+  /* ── Borrar una fila individual ── */
+  window.borrarFila = function(taskIdx) {
+    if (!confirm(`¿Borrar la fila de la Tarea #${taskIdx}?`)) return;
+    remove(ref(db, `filas/${taskIdx}`));
+    if (eventoActivo && eventoActivo.id) {
+      remove(ref(db, `eventos/${eventoActivo.id}/filas/${taskIdx}`));
+    }
+  };
+
+  /* ── Borrar todas las filas ── */
+  window.borrarTodasLasFilas = function() {
+    if (!confirm('¿Seguro que deseas borrar todas las filas en curso?')) return;
+    set(ref(db, 'filas'), null);
+    if (eventoActivo && eventoActivo.id) {
+      set(ref(db, `eventos/${eventoActivo.id}/filas`), null);
+    }
+  };
+
   /* ── Listeners ── */
   onValue(ref(db, 'evento_activo'), snap => {
     eventoActivo = snap.val();
@@ -651,6 +720,8 @@
     renderFilas();
     const total = Object.keys(filasData).length;
     document.getElementById('event-filas-badge').textContent = `${total} fila${total !== 1 ? 's' : ''} activa${total !== 1 ? 's' : ''}`;
+    const btnClear = document.getElementById('btn-clear-filas');
+    if (btnClear) btnClear.style.display = total > 0 ? 'inline-flex' : 'none';
     document.getElementById('status-dot').className = 'live';
     document.getElementById('status-text').textContent = 'En vivo';
   });
@@ -736,7 +807,15 @@
               <div class="task-num">Fila #${taskIdx}</div>
             </div>
           </div>
-          <span class="vendida-chip">Vendida</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="vendida-chip">Vendida</span>
+            <button class="delete-fila-btn" onclick="borrarFila('${taskIdx}')" title="Borrar esta fila">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="card-body">
           <div class="info-row">
