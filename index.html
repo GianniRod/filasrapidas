@@ -484,23 +484,26 @@
     .fila-card.vendida .copy-btn:hover { background: var(--sold-d); box-shadow: 0 4px 12px rgba(224,58,58,.3); }
 
     .sold-btn {
-      width: 100%;
-      height: 38px;
-      margin-top: 8px;
-      background: #fff;
-      color: var(--sold);
-      border: 1px solid rgba(224,58,58,.35);
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: background .2s, border-color .2s, transform .1s;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      transition: background .2s, color .2s, transform .1s;
     }
-    .sold-btn:hover { background: var(--sold-bg); border-color: var(--sold); }
-    .sold-btn:active { transform: translateY(1px); }
-    .fila-card.vendida .sold-btn { color: var(--muted); border-color: var(--border); }
-    .fila-card.vendida .sold-btn:hover { color: var(--text); background: var(--teal-xl); border-color: var(--teal-l); }
+    .sold-btn:hover { background: rgba(255,255,255,.35); }
+    .sold-btn:active { transform: scale(.92); }
+    .fila-card.vendida .sold-btn { background: #fff; color: var(--sold); border-color: #fff; }
+    .fila-card.vendida .sold-btn:hover { background: rgba(255,255,255,.85); }
 
     /* ── Empty state ── */
     #empty-state {
@@ -850,6 +853,7 @@
           </div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span class="vendida-chip">Vendida</span>
+            <button class="sold-btn" onclick="toggleVendida('${taskIdx}')" title="${vendida ? 'Desmarcar vendida' : 'Marcar como vendida'}">$</button>
             <button class="delete-fila-btn" onclick="borrarFila('${taskIdx}')" title="Borrar esta fila">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -888,9 +892,6 @@
         <div class="card-footer">
           <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${esc(data.url)}')">
             Copiar link de fila
-          </button>
-          <button class="sold-btn" onclick="toggleVendida('${taskIdx}')">
-            ${vendida ? 'Desmarcar vendida' : 'Marcar como vendida'}
           </button>
         </div>
       `;
