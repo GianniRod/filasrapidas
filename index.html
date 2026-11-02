@@ -555,22 +555,8 @@
       gap: 10px;
       white-space: nowrap;
     }
-    #update-bar strong { color: var(--teal); font-weight: 700; font-variant-numeric: tabular-nums; }
-    #progress-wrap {
-      display: inline-block;
-      width: 90px;
-      height: 4px;
-      background: rgba(255,255,255,.15);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    #progress-fill {
-      display: block;
-      height: 100%;
-      background: var(--teal);
-      border-radius: 4px;
-      transition: width 1s linear;
-    }
+    #btn-actualizar:hover { background: var(--teal-d) !important; }
+    #btn-actualizar:active { transform: scale(.97); }
 
     @media (max-width: 720px) {
       .form-row { grid-template-columns: 1fr; }
@@ -673,8 +659,15 @@
 
 <!-- Bottom bar -->
 <div id="update-bar">
-  <span>Actualizando en <strong><span id="countdown-secs">30</span>s</strong></span>
-  <span id="progress-wrap"><span id="progress-fill" style="width:100%"></span></span>
+  <button id="btn-actualizar" onclick="solicitarActualizacion()" style="background:var(--teal);color:#fff;border:none;border-radius:999px;padding:8px 20px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background .2s,transform .1s;">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <polyline points="1 20 1 14 7 14"></polyline>
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+    </svg>
+    Actualizar datos
+  </button>
+  <span id="sync-status" style="font-size:12px;color:rgba(255,255,255,.7);"></span>
 </div>
 
 <!-- FIREBASE SDK -->
@@ -934,13 +927,29 @@
     }).catch(() => prompt('Copia este link:', url));
   };
 
-  /* ── Countdown ── */
-  let secsLeft = 30;
-  setInterval(() => {
-    secsLeft = secsLeft <= 1 ? 30 : secsLeft - 1;
-    document.getElementById('countdown-secs').textContent = secsLeft;
-    document.getElementById('progress-fill').style.width  = (secsLeft / 30 * 100) + '%';
-  }, 1000);
+  /* ── Actualizar manual ── */
+  window.solicitarActualizacion = function() {
+    const btn = document.getElementById('btn-actualizar');
+    const statusEl = document.getElementById('sync-status');
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    statusEl.textContent = 'Solicitando...';
+    
+    set(ref(db, 'sync_request'), Date.now()).then(() => {
+      statusEl.textContent = 'Sincronizando...';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        statusEl.textContent = 'Datos actualizados';
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      }, 5000);
+    }).catch(() => {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      statusEl.textContent = 'Error al solicitar';
+      setTimeout(() => { statusEl.textContent = ''; }, 3000);
+    });
+  };
 </script>
 </body>
 </html>
