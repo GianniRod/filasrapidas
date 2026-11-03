@@ -840,13 +840,27 @@
       // Espera
       let esperaTxt = '—';
       if (data.espera != null && data.espera !== '') {
-        const s = String(data.espera).trim();
-        if (/[a-zA-Z]/.test(s)) {
+        let s = String(data.espera).trim();
+
+        // Limpiar artefactos de Knockout observable (ej: function t(){return 0})
+        if (/function|return|\{|\}/i.test(s)) {
+          const retMatch = s.match(/return\s+['"]?([^'";}]+)['"]?/i);
+          const retVal = retMatch ? retMatch[1].trim() : '';
+          
+          if (!retVal || retVal === '0' || retVal === 'null' || retVal === 'undefined') {
+            esperaTxt = 'Calculando espera...';
+          } else if (!isNaN(Number(retVal))) {
+            const n = Number(retVal);
+            esperaTxt = n === 0 ? 'Menos de 1 min' : (n > 60 ? `~${Math.round(n / 60)} min` : `${n} min`);
+          } else {
+            esperaTxt = retVal;
+          }
+        } else if (/[a-zA-Z]/.test(s)) {
           esperaTxt = s;
         } else {
           const num = Number(s);
           if (!isNaN(num)) {
-            esperaTxt = num > 60 ? `~${Math.round(num / 60)} min` : `${num} min`;
+            esperaTxt = num === 0 ? 'Menos de 1 min' : (num > 60 ? `~${Math.round(num / 60)} min` : `${num} min`);
           } else {
             esperaTxt = s;
           }
@@ -854,15 +868,41 @@
       }
 
       // Personas
-      const personas = data.personas != null ? Number(data.personas).toLocaleString('es-AR') : '—';
+      let personas = '—';
+      if (data.personas != null && data.personas !== '') {
+        let pRaw = String(data.personas).trim();
+        if (/function|return|\{|\}/i.test(pRaw)) {
+          const m = pRaw.match(/return\s+['"]?([^'";}]+)['"]?/i);
+          pRaw = m ? m[1].trim() : '';
+        }
+        if (pRaw && pRaw !== 'null' && pRaw !== 'undefined' && pRaw !== '—') {
+          const num = Number(pRaw.replace(/[^0-9]/g, ''));
+          personas = !isNaN(num) && pRaw !== '' ? num.toLocaleString('es-AR') : pRaw;
+        }
+      }
 
       // ID fila completo
-      const idCompleto = data.idFila && data.idFila !== 'NO_ENCONTRADO'
-        ? data.idFila
-        : '—';
+      let idCompleto = '—';
+      if (data.idFila && data.idFila !== 'NO_ENCONTRADO') {
+        let idRaw = String(data.idFila).trim();
+        if (/function|return|\{|\}/i.test(idRaw)) {
+          const m = idRaw.match(/return\s+['"]?([^'";}]+)['"]?/i);
+          idRaw = m ? m[1].trim() : '';
+        }
+        if (idRaw && idRaw !== 'null' && idRaw !== 'undefined' && idRaw !== '0') {
+          idCompleto = idRaw;
+        }
+      }
+
+      // URL limpia
+      let linkUrl = data.url || '';
+      if (/function|return|\{|\}/i.test(linkUrl)) {
+        const m = linkUrl.match(/return\s+['"]?([^'";}]+)['"]?/i);
+        if (m) linkUrl = m[1].trim();
+      }
 
       // Detectar si no llegó a sacar el ID o el link no tiene contenido válido
-      const faltaId = !data.idFila || data.idFila === 'NO_ENCONTRADO' || data.idFila === '—' || !data.url || data.url.includes('NO_ENCONTRADO');
+      const faltaId = !idCompleto || idCompleto === '—' || !linkUrl || linkUrl.includes('NO_ENCONTRADO');
 
       card.innerHTML = `
         <div class="card-header">
@@ -900,7 +940,7 @@
           </div>
           <div class="info-row">
             <span class="info-label">ID Fila</span>
-            <span class="info-value mono" style="font-size:11px;max-width:210px;word-break:break-all;" title="${esc(data.idFila)}">${idCompleto}</span>
+            <span class="info-value mono" style="font-size:11px;max-width:210px;word-break:break-all;" title="${esc(idCompleto)}">${idCompleto}</span>
           </div>
           <div class="info-row">
             <span class="info-label">En cola delante</span>
@@ -922,7 +962,7 @@
             Reintentar scrapear ID
           </button>
           ` : ''}
-          <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${esc(data.url)}')">
+          <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${esc(linkUrl)}')">
             Copiar link de fila
           </button>
         </div>
