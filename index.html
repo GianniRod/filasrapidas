@@ -851,18 +851,33 @@
             esperaTxt = 'Calculando espera...';
           } else if (!isNaN(Number(retVal))) {
             const n = Number(retVal);
-            esperaTxt = n === 0 ? 'Menos de 1 min' : (n > 60 ? `~${Math.round(n / 60)} min` : `${n} min`);
+            esperaTxt = n === 0 ? 'Calculando espera...' : (n > 60 ? `~${Math.round(n / 60)} min` : `${n} min`);
           } else {
             esperaTxt = retVal;
           }
-        } else if (/[a-zA-Z]/.test(s)) {
-          esperaTxt = s;
         } else {
-          const num = Number(s);
-          if (!isNaN(num)) {
-            esperaTxt = num === 0 ? 'Menos de 1 min' : (num > 60 ? `~${Math.round(num / 60)} min` : `${num} min`);
-          } else {
+          // 2. Si el valor es 0, "0", "0 seg", "0s", "0 min", significa que Queue-it está calculando la espera tras el sorteo
+          const numOnly = s.replace(/[^0-9.]/g, '');
+          if (s === '0' || numOnly === '0' || /^0\s*(?:seg|s|min|minutos|segundos)?$/i.test(s)) {
+            esperaTxt = 'Calculando espera...';
+          } else if (/[a-zA-Z]/.test(s) && !/^[0-9.]+\s*(?:seg|s|min|minutos|segundos)$/i.test(s)) {
+            // Texto descriptivo (ej: "6 minutos", "Menos de un minuto", "En prefila...")
             esperaTxt = s;
+          } else {
+            // Número o número con unidad (ej: 120 seg, 360, 5 min)
+            const num = Number(numOnly);
+            if (!isNaN(num) && numOnly !== '') {
+              if (num === 0) {
+                esperaTxt = 'Calculando espera...';
+              } else if (s.includes('seg') || s.includes('s') || num > 180) {
+                const min = Math.round(num / 60);
+                esperaTxt = min <= 1 ? 'Menos de 1 min' : `~${min} min`;
+              } else {
+                esperaTxt = `${num} min`;
+              }
+            } else {
+              esperaTxt = s;
+            }
           }
         }
       }
