@@ -483,6 +483,32 @@
     .fila-card.vendida .copy-btn { background: var(--sold); }
     .fila-card.vendida .copy-btn:hover { background: var(--sold-d); box-shadow: 0 4px 12px rgba(224,58,58,.3); }
 
+    .retry-btn {
+      width: 100%;
+      height: 38px;
+      margin-bottom: 8px;
+      background: #fff8e1;
+      color: #996500;
+      border: 1px solid #ffe082;
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background .2s, border-color .2s, transform .1s;
+    }
+    .retry-btn:hover {
+      background: #ffecb3;
+      border-color: #ffd54f;
+    }
+    .retry-btn:active {
+      transform: scale(.98);
+    }
+
     .sold-btn {
       background: rgba(255,255,255,.2);
       border: 1px solid rgba(255,255,255,.3);
@@ -835,6 +861,9 @@
         ? data.idFila
         : '—';
 
+      // Detectar si no llegó a sacar el ID o el link no tiene contenido válido
+      const faltaId = !data.idFila || data.idFila === 'NO_ENCONTRADO' || data.idFila === '—' || !data.url || data.url.includes('NO_ENCONTRADO');
+
       card.innerHTML = `
         <div class="card-header">
           <div class="task-id">
@@ -883,6 +912,16 @@
           </div>
         </div>
         <div class="card-footer">
+          ${faltaId ? `
+          <button class="retry-btn" id="btn-retry-${taskIdx}" onclick="reintentarScraping('${taskIdx}')" title="Reintentar abrir modal y extraer ID">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Reintentar scrapear ID
+          </button>
+          ` : ''}
           <button class="copy-btn" id="copy-btn-${taskIdx}" onclick="copiarLink('${taskIdx}','${esc(data.url)}')">
             Copiar link de fila
           </button>
@@ -925,6 +964,24 @@
       btn.classList.add('copied');
       setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
     }).catch(() => prompt('Copia este link:', url));
+  };
+
+  /* ── Reintentar scraping para una tarea individual ── */
+  window.reintentarScraping = function(taskIdx) {
+    const btn = document.getElementById(`btn-retry-${taskIdx}`);
+    if (btn) {
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Reintentando en vivo...
+      `;
+    }
+    set(ref(db, `retry_scrape_request/${taskIdx}`), Date.now());
   };
 
   /* ── Actualizar manual ── */
